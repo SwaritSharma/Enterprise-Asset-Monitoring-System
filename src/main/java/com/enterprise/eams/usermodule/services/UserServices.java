@@ -27,7 +27,7 @@ public class UserServices {
 
     public UserResponseDTO updateRole(Long id, UserRoleUpdateRequestDto userRoleUpdateRequestDto) {
         User targetUser=userRepository.findById(id).orElseThrow(()->new UserNotFoundException("User not found "+id));
-        if(userRoleUpdateRequestDto.getRole()==userRoleUpdateRequestDto.getRole()){
+        if(userRoleUpdateRequestDto.getRole()==targetUser.getRole()){
             throw new UserRoleSameException("User already has the same role " + userRoleUpdateRequestDto.getRole());
         }
         targetUser.setRole(userRoleUpdateRequestDto.getRole());

@@ -65,4 +65,37 @@ public class GlobalExceptionHandler {
         );
         return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
+
+    @ExceptionHandler(InvalidOtpOrSessionException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidOtpOrSessionException(InvalidOtpOrSessionException e) {
+        ErrorResponse response=new ErrorResponse(
+                401,
+                e.getMessage(),
+                null,
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleUserAlreadyExistsException(UserAlreadyExistsException e) {
+        ErrorResponse response=new ErrorResponse(
+                409,
+                e.getMessage(),
+                null,
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(UserRoleSameException.class)
+    public ResponseEntity<ErrorResponse> handleUserRoleSameException(UserRoleSameException e) {
+        ErrorResponse response=new ErrorResponse(
+                409,
+                e.getMessage(),
+                null,
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+    }
 }

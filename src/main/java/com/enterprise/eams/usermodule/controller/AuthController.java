@@ -1,9 +1,6 @@
 package com.enterprise.eams.usermodule.controller;
 
-import com.enterprise.eams.usermodule.dtos.LoginRequestDTO;
-import com.enterprise.eams.usermodule.dtos.LoginResponseDTO;
-import com.enterprise.eams.usermodule.dtos.RegisterRequestDTO;
-import com.enterprise.eams.usermodule.dtos.RegisterResponseDTO;
+import com.enterprise.eams.usermodule.dtos.*;
 import com.enterprise.eams.usermodule.services.AuthServices;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +24,12 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO) {
+    public ResponseEntity<LoginOtpResponseDTO> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO) {
         return new ResponseEntity<>(authServices.loginUser(loginRequestDTO),HttpStatus.OK);
+    }
+
+    @PostMapping("/verify-otp")
+    public ResponseEntity<LoginResponseDTO>verifyOtp(@Valid @RequestBody VerifyOtpRequestDTO verifyOtpRequestDTO) {
+        return  new ResponseEntity<>(authServices.otpVerification(verifyOtpRequestDTO),HttpStatus.OK);
     }
 }
