@@ -13,6 +13,7 @@ import com.enterprise.eams.usermodule.exception.UserNotFoundException;
 import com.enterprise.eams.usermodule.mapper.UserMapper;
 import com.enterprise.eams.usermodule.repositories.OtpRepository;
 import com.enterprise.eams.usermodule.repositories.UserRepository;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -94,6 +95,7 @@ public class AuthServices {
         return loginOtpResponseDTO;
     }
 
+    @Transactional
     public LoginResponseDTO otpVerification(@Valid VerifyOtpRequestDTO verifyOtpRequestDTO) {
         String loginEmail=tokenStore.get(verifyOtpRequestDTO.getTempToken());
 
