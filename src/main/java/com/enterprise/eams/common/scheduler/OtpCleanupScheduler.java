@@ -1,6 +1,7 @@
 package com.enterprise.eams.common.scheduler;
 
 import com.enterprise.eams.usermodule.repositories.OtpRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -13,6 +14,7 @@ public class OtpCleanupScheduler {
 
     private final OtpRepository otpRepository;
 
+    @Transactional
     @Scheduled(fixedRate = 30000)
     public void cleanExpiredOtps() {
         otpRepository.deleteByExpiryTimeBefore(LocalDateTime.now());
