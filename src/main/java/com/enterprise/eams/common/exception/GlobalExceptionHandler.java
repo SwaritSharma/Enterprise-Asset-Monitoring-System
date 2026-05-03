@@ -1,5 +1,7 @@
-package com.enterprise.eams.usermodule.exception;
+package com.enterprise.eams.common.exception;
 
+import com.enterprise.eams.assetmodule.exception.AssetNotFoundException;
+import com.enterprise.eams.usermodule.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -97,5 +99,16 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now()
         );
         return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(AssetNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleAssetNotFoundException(AssetNotFoundException e) {
+        ErrorResponse response=new ErrorResponse(
+                404,
+                e.getMessage(),
+                null,
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 }

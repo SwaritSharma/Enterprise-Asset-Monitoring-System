@@ -1,4 +1,4 @@
-package com.enterprise.eams.usermodule.exception;
+package com.enterprise.eams.common.exception;
 
 
 import lombok.AllArgsConstructor;
