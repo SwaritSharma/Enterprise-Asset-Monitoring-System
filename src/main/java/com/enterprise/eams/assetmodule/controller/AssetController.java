@@ -4,6 +4,7 @@ import com.enterprise.eams.assetmodule.dtos.RegisterAssetRequestDTO;
 import com.enterprise.eams.assetmodule.dtos.AssetResponseDTO;
 import com.enterprise.eams.assetmodule.dtos.UpdateAssetRequestDTO;
 import com.enterprise.eams.assetmodule.services.AssetServices;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ public class AssetController {
     private final AssetServices assetService;
 
     @PostMapping
-    public ResponseEntity<AssetResponseDTO> createAsset(@RequestBody RegisterAssetRequestDTO registerAssetRequestDTO) {
+    public ResponseEntity<AssetResponseDTO> createAsset(@Valid @RequestBody RegisterAssetRequestDTO registerAssetRequestDTO) {
         return new ResponseEntity<>(assetService.registerAsset(registerAssetRequestDTO), HttpStatus.CREATED);
     }
 
@@ -34,7 +35,7 @@ public class AssetController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AssetResponseDTO> updateAsset(@PathVariable Long id, @RequestBody UpdateAssetRequestDTO updateAssetRequestDTO) {
+    public ResponseEntity<AssetResponseDTO> updateAsset(@PathVariable Long id, @Valid @RequestBody UpdateAssetRequestDTO updateAssetRequestDTO) {
         return new ResponseEntity<>(assetService.updateAsset(id, updateAssetRequestDTO),HttpStatus.OK);
     }
 
