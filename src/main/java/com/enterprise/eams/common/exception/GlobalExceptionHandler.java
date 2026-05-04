@@ -1,6 +1,11 @@
 package com.enterprise.eams.common.exception;
 
+import com.enterprise.eams.alertmodule.exception.AlertAlreadyAcknowledgedException;
+import com.enterprise.eams.alertmodule.exception.AlertNotFoundException;
+import com.enterprise.eams.alertmodule.exception.AlertAlreadyResolvedException;
 import com.enterprise.eams.assetmodule.exception.AssetNotFoundException;
+import com.enterprise.eams.assetmodule.exception.DuplicateAssetException;
+import com.enterprise.eams.assetmodule.exception.InvalidAssetAssignmentException;
 import com.enterprise.eams.usermodule.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -111,4 +116,61 @@ public class GlobalExceptionHandler {
         );
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(InvalidAssetAssignmentException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidAssetAssignmentException(InvalidAssetAssignmentException e) {
+        ErrorResponse response=new ErrorResponse(
+                400,
+                e.getMessage(),
+                null,
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DuplicateAssetException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicateAssetException(DuplicateAssetException e) {
+        ErrorResponse response=new ErrorResponse(
+                400,
+                e.getMessage(),
+                null,
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AlertNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleAlertNotFoundException(AlertNotFoundException e) {
+        ErrorResponse response=new ErrorResponse(
+                404,
+                e.getMessage(),
+                null,
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(AlertAlreadyResolvedException.class)
+    public ResponseEntity<ErrorResponse> handleAlertAlreadyResolvedException(AlertAlreadyResolvedException e) {
+        ErrorResponse response=new ErrorResponse(
+                404,
+                e.getMessage(),
+                null,
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(AlertAlreadyAcknowledgedException.class)
+    public ResponseEntity<ErrorResponse> handleAlertAlreadyAcknowledgedException(AlertAlreadyAcknowledgedException e) {
+        ErrorResponse response=new ErrorResponse(
+                404,
+                e.getMessage(),
+                null,
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+
 }

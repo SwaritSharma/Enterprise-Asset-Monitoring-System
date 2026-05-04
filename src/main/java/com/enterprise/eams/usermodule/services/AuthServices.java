@@ -38,6 +38,8 @@ public class AuthServices {
     @Value("${eams.manager.domain}")
     private String domain;
 
+
+    @Transactional
     public RegisterResponseDTO registerUser(@Valid RegisterRequestDTO registerRequestDTO) {
         registerRequestDTO.setEmail(registerRequestDTO.getEmail().trim().toLowerCase());
         if(userRepository.existsByEmail(registerRequestDTO.getEmail())) {
@@ -53,10 +55,17 @@ public class AuthServices {
         }
         RegisterResponseDTO registered=userMapper.toRegisterResponseDto(userRepository.save(user));
 
-        emailService.sendEmail(registered.getEmail(),
-                "Welcome To EAMS",
-                "Hello " + registered.getUsername() +
-                        "\nYou have been successfully registered on EAMS as "+registered.getRole());
+        emailService.sendEmail(
+                registered.getEmail(),
+                "Welcome to EAMS",
+                "Dear " + registered.getUsername() + ",\n\n" +
+                        "Welcome to the Enterprise Asset Monitoring System (EAMS).\n\n" +
+                        "Your account has been successfully created with the role: " + registered.getRole() + ".\n\n" +
+                        "You can now log in and start using the platform.\n\n" +
+                        "If you have any questions or need assistance, feel free to reach out.\n\n" +
+                        "Best regards,\n" +
+                        "EAMS Team"
+        );
         return registered;
     }
 
@@ -78,15 +87,19 @@ public class AuthServices {
         Otp verificationOtp=new Otp();
         verificationOtp.setOtp(otp);
         verificationOtp.setEmail(u.getEmail());
-        verificationOtp.setExpiryTime(LocalDateTime.now().plusMinutes(2));
+        verificationOtp.setExpiryTime(LocalDateTime.now().plusMinutes(5));
 
         otpRepository.save(verificationOtp);
 
         emailService.sendEmail(
                 u.getEmail(),
-                "One Time Login Password",
-                "Your One Time Login Password is \n" +
-                        otp+"\n One Time Password Is Valid Only For 2 minutes"
+                "Your One-Time Password (OTP) for Login",
+                "Dear User,\n\n" +
+                        "Your One-Time Password (OTP) for login is: " + otp + "\n\n" +
+                        "This OTP is valid for 5 minutes. Please do not share it with anyone for security reasons.\n\n" +
+                        "If you did not request this, please ignore this email.\n\n" +
+                        "Best regards,\n" +
+                        "EAMS Team"
         );
 
         LoginOtpResponseDTO loginOtpResponseDTO=new LoginOtpResponseDTO();

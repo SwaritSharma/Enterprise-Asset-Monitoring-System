@@ -21,12 +21,17 @@ public class SensorDataIngestionScheduler {
 
     private final Random random = new Random();
 
-    @Scheduled(fixedRate = 10000)
+    @Scheduled(fixedRate = 120000)
     public void generateSensorData() {
 
         List<Asset> assets = assetRepository.findAll();
 
         for (Asset asset : assets) {
+
+            //just for testing
+            if (random.nextInt(3) != 0) {
+                continue;
+            }
 
             SensorDataRequestDTO dto = new SensorDataRequestDTO();
             dto.setAssetId(asset.getId());

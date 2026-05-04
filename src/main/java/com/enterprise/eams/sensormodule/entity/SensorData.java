@@ -28,6 +28,7 @@ public class SensorData {
     @Column(nullable = false)
     private Double pressure;
 
+    @Column(nullable = false)
     private LocalDateTime timestamp;
 
     @PrePersist()

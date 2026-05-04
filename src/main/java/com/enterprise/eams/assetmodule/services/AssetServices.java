@@ -5,16 +5,22 @@ import com.enterprise.eams.assetmodule.dtos.AssetResponseDTO;
 import com.enterprise.eams.assetmodule.dtos.UpdateAssetRequestDTO;
 import com.enterprise.eams.assetmodule.entity.Asset;
 import com.enterprise.eams.assetmodule.exception.AssetNotFoundException;
+import com.enterprise.eams.assetmodule.exception.DuplicateAssetException;
+import com.enterprise.eams.assetmodule.exception.InvalidAssetAssignmentException;
 import com.enterprise.eams.assetmodule.mapper.AssetMapper;
 import com.enterprise.eams.assetmodule.repositories.AssetRepository;
 import com.enterprise.eams.common.services.EmailServices;
 import com.enterprise.eams.usermodule.entity.User;
+import com.enterprise.eams.usermodule.enums.UserRole;
 import com.enterprise.eams.usermodule.exception.UserNotFoundException;
 import com.enterprise.eams.usermodule.repositories.UserRepository;
+import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
@@ -25,13 +31,19 @@ public class AssetServices {
     private final AssetMapper assetMapper;
     private final EmailServices emailService;
 
+
+    @Transactional
     public AssetResponseDTO registerAsset(RegisterAssetRequestDTO registerAssetRequestDTO) {
         Asset asset = assetMapper.toEntity(registerAssetRequestDTO);
         User assignedUser=null;
+        if(assetRepository.existsByName(registerAssetRequestDTO.getName())){
+            throw new DuplicateAssetException("Asset with this name "+registerAssetRequestDTO.getName()+" already exists");
+        }
         if(registerAssetRequestDTO.getAssignedUserId()!=null)
         {
             assignedUser=userRepository.findById(registerAssetRequestDTO.getAssignedUserId()).orElseThrow(()
             -> new UserNotFoundException("User ID Not Found"));
+            validateAssignableUser(assignedUser);
             asset.setAssignedTo(assignedUser);
         }
         Asset assetToSave = assetRepository.save(asset);
@@ -62,11 +74,22 @@ public class AssetServices {
         return assetMapper.toAssetResponseDTO(asset);
     }
 
-    public AssetResponseDTO updateAsset(Long assetId,UpdateAssetRequestDTO updateAssetRequestDTO) {
+    @Transactional
+    public AssetResponseDTO updateAsset(Long assetId,@Valid UpdateAssetRequestDTO updateAssetRequestDTO) {
         Asset asset = assetRepository.findById(assetId).orElseThrow(() -> new AssetNotFoundException("Asset does not exist with id : " + assetId));
 
         if (updateAssetRequestDTO.getName() != null) {
-            asset.setName(updateAssetRequestDTO.getName());
+            String newName = updateAssetRequestDTO.getName().trim();
+
+            if (!newName.equals(asset.getName()) &&
+                    assetRepository.existsByName(newName)) {
+
+                throw new DuplicateAssetException(
+                        "Asset with name " + newName + " already exists"
+                );
+            }
+
+            asset.setName(newName);
         }
 
         if (updateAssetRequestDTO.getType() != null) {
@@ -91,6 +114,7 @@ public class AssetServices {
 
         if(updateAssetRequestDTO.getAssignedUserId()!=null){
             updatedUser=userRepository.findById(updateAssetRequestDTO.getAssignedUserId()).orElseThrow(() -> new UserNotFoundException("User ID Not Found Asset cannot be assigned to "+updateAssetRequestDTO.getAssignedUserId()));
+            validateAssignableUser(updatedUser);
             if(assignedUser==null || !updatedUser.getId().equals(assignedUser.getId())) {
                 asset.setAssignedTo(updatedUser);
                 changed=true;
@@ -138,11 +162,20 @@ public class AssetServices {
         return assetMapper.toAssetResponseDTO(assetToSave);
     }
 
+    @Transactional
     public AssetResponseDTO deleteAsset(Long id) {
         Asset asset=assetRepository.findById(id).orElseThrow(() -> new AssetNotFoundException("Asset does not exist with id : " + id));
         AssetResponseDTO assetResponseDTO=assetMapper.toAssetResponseDTO(asset);
         assetRepository.delete(asset);
         return assetResponseDTO;
+    }
+
+    private void validateAssignableUser(User user) {
+        if (!user.getRole().equals(UserRole.OPERATOR)) {
+            throw new InvalidAssetAssignmentException(
+                    "Asset can only be assigned to OPERATOR"
+            );
+        }
     }
 }
 
