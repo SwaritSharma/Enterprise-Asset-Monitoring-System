@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -32,8 +33,12 @@ public class AlertServices {
         double thresholdTemp = asset.getThresholdTemp();
         double thresholdPressure = asset.getThresholdPressure();
 
+        List<AlertStatus> statuses = new ArrayList<>();
+        statuses.add(AlertStatus.ACTIVE);
+        statuses.add(AlertStatus.ACKNOWLEDGED);
+
         Alert alert = alertRepository
-                .findByAssetIdAndStatus(asset.getId(), AlertStatus.ACTIVE)
+                .findByAssetIdAndStatusIn(asset.getId(), statuses)
                 .orElse(null);
 
         boolean tempExceeded = temperature > thresholdTemp;
