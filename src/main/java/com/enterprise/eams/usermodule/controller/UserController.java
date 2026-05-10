@@ -17,6 +17,7 @@ public class UserController {
 
     private final UserServices userService;
 
+
     @GetMapping
     public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
         return new ResponseEntity<>(userService.getUsers(), HttpStatus.OK);

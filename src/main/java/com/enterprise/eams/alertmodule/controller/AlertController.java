@@ -26,7 +26,7 @@ public class AlertController {
         return new ResponseEntity<>(alertService.resolveAlert(id), HttpStatus.OK);
     }
 
-    @PutMapping("/{id}/acknoweldge")
+    @PutMapping("/{id}/acknowledge")
     public ResponseEntity<AlertResponseDTO> acknowledgeAlert(@PathVariable Long id) {
         return new ResponseEntity<>(alertService.acknowledgeAlert(id), HttpStatus.OK);
     }

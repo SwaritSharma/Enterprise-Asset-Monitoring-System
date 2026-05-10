@@ -4,7 +4,6 @@ import com.enterprise.eams.common.services.EmailServices;
 import com.enterprise.eams.usermodule.dtos.UserResponseDTO;
 import com.enterprise.eams.usermodule.dtos.UserRoleUpdateRequestDto;
 import com.enterprise.eams.usermodule.entity.User;
-import com.enterprise.eams.usermodule.enums.UserRole;
 import com.enterprise.eams.usermodule.exception.UserNotFoundException;
 import com.enterprise.eams.usermodule.exception.UserRoleSameException;
 import com.enterprise.eams.usermodule.mapper.UserMapper;
