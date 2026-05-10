@@ -38,7 +38,7 @@ public class AlertServices {
         statuses.add(AlertStatus.ACKNOWLEDGED);
 
         Alert alert = alertRepository
-                .findByAssetIdAndStatusIn(asset.getId(), statuses)
+                .findFirstByAssetIdAndStatusIn(asset.getId(), statuses)
                 .orElse(null);
 
         boolean tempExceeded = temperature > thresholdTemp;

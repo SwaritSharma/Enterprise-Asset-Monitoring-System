@@ -1,6 +1,7 @@
 package com.enterprise.eams.usermodule.services;
 
 
+import com.enterprise.eams.common.security.jwt.JwtService;
 import com.enterprise.eams.common.services.EmailServices;
 import com.enterprise.eams.usermodule.dtos.*;
 import com.enterprise.eams.usermodule.entity.Otp;
@@ -35,6 +36,7 @@ public class AuthServices {
     private final PasswordEncoder passwordEncoder;
     private final EmailServices emailService;
     private final Map<String,String> tokenStore;
+    private final JwtService jwtService;
     @Value("${eams.manager.domain}")
     private String domain;
 
@@ -129,6 +131,13 @@ public class AuthServices {
         User u=userRepository.findByEmail(loginEmail).orElseThrow(()->new UserNotFoundException("User email not found "+loginEmail));
         otpRepository.deleteByEmail(loginEmail);
         tokenStore.remove(verifyOtpRequestDTO.getTempToken());
-        return userMapper.toLoginResponseDto(u);
+
+        LoginResponseDTO response = userMapper.toLoginResponseDto(u);
+
+        String jwtToken = jwtService.generateToken(u);
+
+        response.setToken(jwtToken);
+
+        return response;
     }
 }

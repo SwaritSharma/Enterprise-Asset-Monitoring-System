@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface AlertRepository extends JpaRepository<Alert, Long> {
 
-   Optional<Alert> findByAssetIdAndStatusIn(Long assetId, List<AlertStatus> statuses);
+   Optional<Alert> findFirstByAssetIdAndStatusIn(Long assetId, List<AlertStatus> statuses);
 
    List<Alert> findAllByStatus(AlertStatus status);
    List<Alert> findAllByAssetAndStatus(Asset asset, AlertStatus status);
